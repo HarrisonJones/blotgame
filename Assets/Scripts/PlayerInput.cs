@@ -5,7 +5,22 @@ using InControl;
 
 public class PlayerInput : MonoBehaviour {
 
-	public float moveSpeed;
+    [Header("Things I have added")]
+
+    [Header("Is the live system active")]
+    public bool arelives;
+
+    [Header("Player Lives")]
+    public int lives = 3;
+
+    [Header("Live Sprites")]
+    public GameObject[] live_sprites;
+    public bool live_delay = false;
+    private bool invinibility_delay = false;
+
+    [Header("Things here originally")]
+
+    public float moveSpeed;
 	public float minSpeed;
 	public float turnSpeed;
 	public float minTurnSpeed;
@@ -143,13 +158,49 @@ public class PlayerInput : MonoBehaviour {
 
 				// We handle death by measuring our colour against the colour of the floor we're standing on
 				// Theoretically, you could also use a grey tolerance of ~0.3f if you wanted to use a mostly black map
-				if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance) && pixelColor != currentColor) {
-					Debug.Log ("Died to: " + pixelColor.ToString () + "and my colour is: " + currentColor.ToString ());
-					Die ();
-				}
+				if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance) && pixelColor != currentColor && !live_delay && !invinibility_delay) {
+
+                    // determines whether to kill or reduce a life based on whether lives are active
+                    if (arelives)
+                    {
+                        Live_Loss(pixelColor);
+                    }
+                    else
+                    {
+                        Die();
+                    }
+                }
 			}
 		}
-	}
+
+        // Used to display lives if they are active
+        if (arelives)
+        {
+            switch (lives)
+            {
+                case 3:
+                    live_sprites[2].SetActive(true);
+                    live_sprites[1].SetActive(false);
+                    live_sprites[0].SetActive(false);
+                    break;
+                case 2:
+                    live_sprites[2].SetActive(false);
+                    live_sprites[1].SetActive(true);
+                    live_sprites[0].SetActive(false);
+                    break;
+                case 1:
+                    live_sprites[2].SetActive(false);
+                    live_sprites[1].SetActive(false);
+                    live_sprites[0].SetActive(true);
+                    break;
+            }
+
+            if (lives <= 0)
+            {
+                Die();
+            }
+        }
+    }
 
 	public void SetControls(CharacterActions characterActionsIN)
 	{
@@ -231,12 +282,94 @@ public class PlayerInput : MonoBehaviour {
 		}
 	}
 
-	void Die()
-	{
-		Camera.main.GetComponent<AudioSource>().PlayOneShot(playerDeath);
-		characterActions.Left.ClearBindings();
-		characterActions.Right.ClearBindings();
-		DestroyObject(gameObject);
-	}
+    // Function played when hit and lives are active
+    void Live_Loss(Color pixelColor)
+    {
+        Debug.Log("Live lost to: " + pixelColor.ToString() + "and my colour is: " + currentColor.ToString());
+        live_delay = true;
+        lives--;
+        StartCoroutine("Live_Delay");
+    }
 
+    // Delay after being hit causing invulnerability
+    IEnumerator Live_Delay()
+    {
+        yield return new WaitForSeconds(2.0f);
+        live_delay = false;
+    }
+
+    // Function played if player is hit without lives active or if lives reach zero
+    void Die()
+    {
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(playerDeath);
+        characterActions.Left.ClearBindings();
+        characterActions.Right.ClearBindings();
+        DestroyObject(gameObject);
+    }
+
+    // Function called when powerup is aquired
+    public void PowerUp(powerup_types powerup_type, float powerup_time, float move_speed)
+    {
+        Debug.Log("Powerup: " + powerup_type);
+
+        // SpeedBoost
+        if (powerup_type == powerup_types.SpeedBoost)
+        {
+            // Setting old variables to be reverted back to
+            float original_sprint_modifier = moveSpeed;
+
+            // Sets new variables of powerup
+            moveSpeed = move_speed;
+
+            // Starts powerup timer
+            StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
+        }
+
+        // Extra Life
+        if (powerup_type == powerup_types.ExtraLife)
+        {
+            lives++;
+        }
+
+        // Invincibility
+        if (powerup_type == powerup_types.Invincible)
+        {
+            // Setting old variables to be reverted back to
+            float original_sprint_modifier = moveSpeed;
+            invinibility_delay = true;
+
+            // Sets new variables of powerup
+            moveSpeed = move_speed;
+
+            // Starts powerup timer
+            StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
+        }
+
+        // Nuke (Just for goofs)
+        if (powerup_type == powerup_types.Nuke)
+        {
+            // Setting old variables to be reverted back to
+            float original_sprint_modifier = moveSpeed;
+            live_delay = true;
+
+            // Sets new variables of powerup
+            moveSpeed = move_speed;
+
+            // Starts powerup timer
+            StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
+        }
+
+        if (powerup_type == powerup_types.AreaWipe)
+        {
+
+        }
+    }
+
+    // Timer for the powerups
+    IEnumerator Powerup_Timer(float timer, float original_move_speed)
+    {
+        yield return new WaitForSeconds(timer);
+        moveSpeed = original_move_speed;
+        invinibility_delay = false;
+    }
 }
