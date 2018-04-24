@@ -15,13 +15,26 @@ public class Pickup : MonoBehaviour
 
     [Header("Variables to be altered by powerup")]
     [Header("Only variable for particular powerup need to be set")]
+
+    [Header("General")]
     public float powerup_active_time;
-    public float move_speed;
+
+    [Header("SpeedBoost")]
+    public float Sprint_Modifier;
+
+    [Header("Area Wipe")]
+    public GameObject arena;
+    public GameObject og_arena;
+    public List<Color> colorstorer = new List<Color>();
+
 
 	// Use this for initialization
 	void Start ()
     {
-		
+        if(powerup_type == powerup_types.AreaWipe)
+        {
+            og_arena = GameObject.FindGameObjectWithTag("ArenaFloor");
+        }
 	}
 
     // Update is called once per frame
@@ -42,15 +55,21 @@ public class Pickup : MonoBehaviour
                 PlayerInput player_script = player.GetComponent<PlayerInput>();
                 if(player_script.arelives && player_script.lives <= 2)
                 {
-                    player_script.PowerUp(powerup_type, powerup_active_time, move_speed);
+                    player_script.PowerUp(powerup_type, powerup_active_time, Sprint_Modifier);
                     Destroy(gameObject);
                 }
+            }
+            else if(powerup_type == powerup_types.AreaWipe)
+            {
+                Instantiate(arena, og_arena.transform.position, og_arena.transform.rotation);
+                Destroy(og_arena);
+                Destroy(gameObject);
             }
             else
             {
                 GameObject player = col.transform.gameObject;
                 PlayerInput player_script = player.GetComponent<PlayerInput>();
-                player_script.PowerUp(powerup_type, powerup_active_time, move_speed);
+                player_script.PowerUp(powerup_type, powerup_active_time, Sprint_Modifier);
                 Destroy(gameObject);
             }
         }
