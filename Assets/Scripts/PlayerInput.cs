@@ -358,11 +358,6 @@ public class PlayerInput : MonoBehaviour {
             // Starts powerup timer
             StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
         }
-
-        if (powerup_type == powerup_types.AreaWipe)
-        {
-
-        }
     }
 
     // Timer for the powerups
