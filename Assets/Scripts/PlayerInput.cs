@@ -4,6 +4,14 @@ using UnityEngine;
 using InControl;
 
 public class PlayerInput : MonoBehaviour {
+	
+	[Header("PowerUps")]
+	
+	private GameObject freezer;
+	public bool freezeOn;
+	private float speedRate;
+	private float speedShoes;
+	private float speedShoesMax = 600;
 
     [Header("Things I have added")]
 
@@ -19,7 +27,7 @@ public class PlayerInput : MonoBehaviour {
     private bool invinibility_delay = false;
 
     [Header("Things here originally")]
-
+	
     public float moveSpeed;
 	public float minSpeed;
 	public float turnSpeed;
@@ -61,6 +69,8 @@ public class PlayerInput : MonoBehaviour {
 
 		ChangeColor(Color.black);
 
+		freezer = GameObject.Find("FreezeManagement");
+		
 		currentSpeed = minSpeed;
 		if (useAcceleration)
 			sprintModifier  = 0;
@@ -75,8 +85,30 @@ public class PlayerInput : MonoBehaviour {
 			PlayerBounds.Bind(transform);
 	}
 
+	//Time based powerups are reduced per frame rather than through deltaTime.
+	void FixedUpdate ()
+	{
+		
+		if (freezeOn)
+		{
+			speedRate = 0;		
+		}
+		else if (speedShoes > 0)
+		{
+			speedRate = 1.5f;
+			speedShoes -= Time.deltaTime;
+		}		
+		else
+		{
+				speedRate = 1f;
+				speedShoes = 0;
+		}
+	}
+	
 	void Update ()
 	{
+		//freezeOn = freezer.gameObject.GetComponent("FreezeManagement").freeze();
+		
 		if (PlayerBounds.S == null)
 		{
 			GameObject bounds = new GameObject("Bounds");
@@ -88,10 +120,10 @@ public class PlayerInput : MonoBehaviour {
 			if (useAcceleration)
 			{
 				if (characterActions.Left.IsPressed && characterActions.Right.IsPressed)
-					sprintModifier = Mathf.Min(sprintModifier + 0.0175f, 1);
+					sprintModifier = Mathf.Min((sprintModifier + 0.0175f) * speedRate, 1);
 
 				else
-					sprintModifier = Mathf.Max(sprintModifier - 0.064f, 0f);
+					sprintModifier = Mathf.Max((sprintModifier - 0.064f) * speedRate, 0f);
 				currentSpeed = Mathf.Lerp(minSpeed, moveSpeed, sprintModifier);
 
 				transform.Translate(new Vector3(0, 0, currentSpeed * Time.deltaTime), Space.Self);
