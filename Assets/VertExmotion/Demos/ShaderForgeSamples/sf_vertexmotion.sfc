@@ -1,0 +1,3 @@
+type:ShaderForge.SFN_Code,id:6216,x:32292,y:33380,cmnt:VertExmotion,varname:node_6216,prsc:2,code:cgBlAHQAdQByAG4AIABWAGUAcgB0AEUAeABtAG8AdABpAG8AbgBTAEYAKAAgAFYAZQByAHQAZQB4AFAAcABvAHMALAAgAFYAZQByAHQAZQB4AEMAbwBsAG8AcgAgACkAOwA=,output:2,fname:SF_VertExmotion,width:267,height:118,input:2,input:2,input_1_label:VertexPpos,input_2_label:VertexColor|A-7563-XYZ,B-4378-RGB
+type:ShaderForge.SFN_FragmentPosition,id:7563,x:32128,y:33294,varname:node_7563,prsc:2
+type:ShaderForge.SFN_VertexColor,id:4378,x:32128,y:33456,varname:node_4378,prsc:2

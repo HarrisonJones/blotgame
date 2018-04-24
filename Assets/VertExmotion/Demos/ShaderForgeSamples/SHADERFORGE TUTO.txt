@@ -1,0 +1,43 @@
+
+Look at the documentation for Shader Forge 1.36 or above.
+
+
+
+Here a tutorial for Shader Forge integration (before shaderforge 1.36) :
+
+- Open the shader in shaderForge editor.
+- in shader Settings, set the path to 'VertExmotion/ShaderName' (ex : 'VertExmotion/ShaderForge/test1' )
+- add a code node 'Include'
+- copy the code :
+
+	return 1;
+
+	}
+
+	#include "Assets/VertExmotion/Shaders/VertExmotion.cginc"
+
+	void none()
+
+	{
+
+- set output to 'Float'
+- add another code node 'VertExmotion'
+- copy the code :
+
+	return VertExmotionSF( worldXYZ, worldW, vColor );
+
+- set output to 'Float3'
+- add an input 'Float3' : worldXYZ
+- add an input 'Float' : worldW
+- add an input 'Float3' : vColor
+- add an input 'Float' : inc
+
+- add a World pos node
+- plug the XYZ output to worldXYZ
+- plug the W putput to worldW
+
+- add a Vertex Color node
+- plug the RGB output to vColor
+- plug the include node output to inc
+
+- plug the VertExmotion node to "Vertex Offset"
