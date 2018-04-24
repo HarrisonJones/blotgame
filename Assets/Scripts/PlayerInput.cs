@@ -73,9 +73,10 @@ public class PlayerInput : MonoBehaviour {
 			if (useAcceleration)
 			{
 				if (characterActions.Left.IsPressed && characterActions.Right.IsPressed)
-					sprintModifier = Mathf.Min(sprintModifier + 0.01f, 1);
+					sprintModifier = Mathf.Min(sprintModifier + 0.0175f, 1);
+
 				else
-					sprintModifier = Mathf.Max(sprintModifier - 0.008f, 0f);
+					sprintModifier = Mathf.Max(sprintModifier - 0.064f, 0f);
 				currentSpeed = Mathf.Lerp(minSpeed, moveSpeed, sprintModifier);
 
 				transform.Translate(new Vector3(0, 0, currentSpeed * Time.deltaTime), Space.Self);
@@ -100,8 +101,11 @@ public class PlayerInput : MonoBehaviour {
 			// This dictates the width of our character's line to the shader
 			// It's important to know your last position as well as your current position so you can fill in the gaps between
 			if (painter) {
-				lastKnownTextureCoord = painter.Dispense (transform.position, lastKnownTextureCoord, currentSpeed/moveSpeed, paintingMaterial);
-				paintingMaterial.SetFloat ("OldCharacterSpeedFactor", currentSpeed/moveSpeed);
+
+				lastKnownTextureCoord = painter.Dispense (transform.position, lastKnownTextureCoord, 0.15f * moveSpeed/currentSpeed, paintingMaterial);
+				paintingMaterial.SetFloat ("OldCharacterSpeedFactor", 0.15f * moveSpeed/currentSpeed);
+				//lastKnownTextureCoord = painter.Dispense (transform.position, lastKnownTextureCoord, currentSpeed/moveSpeed, paintingMaterial);
+				//paintingMaterial.SetFloat ("OldCharacterSpeedFactor", currentSpeed/moveSpeed);
 			}
 
 			//Cast a ray just in front of the character that's pointing towards the floor.
