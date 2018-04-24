@@ -1,0 +1,1 @@
+neutral 0-24, sad, 25-48, angry 49-72, happy, 73-96
