@@ -22,19 +22,19 @@ public class Pickup : MonoBehaviour
     [Header("SpeedBoost")]
     public float Sprint_Modifier;
 
-    [Header("Area Wipe")]
-    public GameObject arena;
-    public GameObject og_arena;
-    public List<Color> colorstorer = new List<Color>();
+    //[Header("Area Wipe")]
+    //public GameObject arena;
+    //public GameObject og_arena;
+    //public List<Color> colorstorer = new List<Color>();
 
 
 	// Use this for initialization
 	void Start ()
     {
-        if(powerup_type == powerup_types.AreaWipe)
-        {
-            og_arena = GameObject.FindGameObjectWithTag("ArenaFloor");
-        }
+        //if(powerup_type == powerup_types.AreaWipe)
+        //{
+        //    og_arena = GameObject.FindGameObjectWithTag("ArenaFloor");
+        //}
 	}
 
     // Update is called once per frame
@@ -59,12 +59,12 @@ public class Pickup : MonoBehaviour
                     Destroy(gameObject);
                 }
             }
-            else if(powerup_type == powerup_types.AreaWipe)
-            {
-                Instantiate(arena, og_arena.transform.position, og_arena.transform.rotation);
-                Destroy(og_arena);
-                Destroy(gameObject);
-            }
+            //else if(powerup_type == powerup_types.AreaWipe)
+            //{
+            //    Instantiate(arena, og_arena.transform.position, og_arena.transform.rotation);
+            //    Destroy(og_arena);
+            //    Destroy(gameObject);
+            //}
             else
             {
                 GameObject player = col.transform.gameObject;
