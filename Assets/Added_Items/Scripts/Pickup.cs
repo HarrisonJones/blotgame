@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum powerup_types { generic, SpeedBoost, ExtraLife, Invincible, Nuke, AreaWipe }
+public enum powerup_types { generic, SpeedBoost, ExtraLife, Invincible, EnemyFreeze, Nuke, AreaWipe }
 
 public class Pickup : MonoBehaviour
 {
