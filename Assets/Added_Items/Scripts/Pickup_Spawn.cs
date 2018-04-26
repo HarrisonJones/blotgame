@@ -28,9 +28,28 @@ public class Pickup_Spawn : MonoBehaviour
     {
         //spawn_time -= Time.deltaTime;
         increasing_time += Time.deltaTime;
-        if(increasing_time <= spawn_time)
+        if(increasing_time <= spawn_time + 0.1f)
         {
             spawn_image.fillAmount = ((increasing_time - 0) / (fixed_spawn_time - 0)) * (1 - 0) + 0;
         }
+        else
+        {
+            if (!spawned)
+            {
+                spawned = true;
+                spawn_image.enabled = false;
+                int random_number = Random.Range(0, powerups.Count);
+                GameObject powerup = Instantiate(powerups[random_number], spawn_point.transform.position, spawn_point.transform.rotation) as GameObject;
+                Pickup powerup_script = powerup.GetComponent<Pickup>();
+                powerup_script.Spawned(this);
+            }
+        }
+    }
+
+    public void Powerup_Taken ()
+    {
+        spawn_image.enabled = true;
+        increasing_time = 0.0f;
+        spawned = false;
     }
 }

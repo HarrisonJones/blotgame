@@ -9,9 +9,9 @@ public class Pickup : MonoBehaviour
     [Header("The type of powerup this is")]
     public powerup_types powerup_type;
 
-    [Header("Used for rotating the model")]
-    public GameObject powerup_body;
-    public float rotation_speed;
+    //[Header("Used for rotating the model")]
+    //public GameObject powerup_body;
+    //public float rotation_speed;
 
     [Header("Variables to be altered by powerup")]
     [Header("Only variable for particular powerup need to be set")]
@@ -21,6 +21,8 @@ public class Pickup : MonoBehaviour
 
     [Header("SpeedBoost")]
     public float Sprint_Modifier;
+
+    private Pickup_Spawn spawn_point;
 
     //[Header("Area Wipe")]
     //public GameObject arena;
@@ -40,8 +42,13 @@ public class Pickup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float step = rotation_speed * Time.deltaTime;
-        powerup_body.transform.Rotate(Vector3.forward, step);
+        //float step = rotation_speed * Time.deltaTime;
+        //powerup_body.transform.Rotate(Vector3.forward, step);
+    }
+
+    public void Spawned (Pickup_Spawn spawnpoint)
+    {
+        spawn_point = spawnpoint;
     }
 
     void OnTriggerEnter (Collider col)
@@ -56,6 +63,7 @@ public class Pickup : MonoBehaviour
                 if(player_script.arelives && player_script.lives <= 2)
                 {
                     player_script.PowerUp(powerup_type, powerup_active_time, Sprint_Modifier);
+                    spawn_point.Powerup_Taken();
                     Destroy(gameObject);
                 }
             }
@@ -70,6 +78,7 @@ public class Pickup : MonoBehaviour
                 GameObject player = col.transform.gameObject;
                 PlayerInput player_script = player.GetComponent<PlayerInput>();
                 player_script.PowerUp(powerup_type, powerup_active_time, Sprint_Modifier);
+                spawn_point.Powerup_Taken();
                 Destroy(gameObject);
             }
         }
