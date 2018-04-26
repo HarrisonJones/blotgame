@@ -26,6 +26,14 @@ public class PlayerInput : MonoBehaviour {
     public bool live_delay = false;
     private bool invinibility_delay = false;
 
+    [Header("Particle Systems")]
+    public ParticleSystem invinciblity;
+    public ParticleSystem SpeedBoost;
+
+    [Header("Powerup related variables")]
+    public PlayerInput[] otherplayers;
+    public bool notaffectedfreeze;
+
     [Header("Things here originally")]
 	
     public float moveSpeed;
@@ -83,7 +91,7 @@ public class PlayerInput : MonoBehaviour {
 
 		if (!PlayerBounds.S.lockedObjects.Contains(transform))
 			PlayerBounds.Bind(transform);
-	}
+    }
 
 	//Time based powerups are reduced per frame rather than through deltaTime.
 	void FixedUpdate ()
@@ -340,7 +348,7 @@ public class PlayerInput : MonoBehaviour {
     }
 
     // Function called when powerup is aquired
-    public void PowerUp(powerup_types powerup_type, float powerup_time, float move_speed)
+    public void PowerUp(powerup_types powerup_type, float powerup_time, float sprint_modifier)
     {
         Debug.Log("Powerup: " + powerup_type);
 
@@ -348,10 +356,13 @@ public class PlayerInput : MonoBehaviour {
         if (powerup_type == powerup_types.SpeedBoost)
         {
             // Setting old variables to be reverted back to
-            float original_sprint_modifier = moveSpeed;
+            float original_sprint_modifier = sprintModifier;
 
             // Sets new variables of powerup
-            moveSpeed = move_speed;
+            sprintModifier = sprint_modifier;
+
+            // Plays ParticleSystem
+            SpeedBoost.Play();
 
             // Starts powerup timer
             StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
@@ -367,25 +378,46 @@ public class PlayerInput : MonoBehaviour {
         if (powerup_type == powerup_types.Invincible)
         {
             // Setting old variables to be reverted back to
-            float original_sprint_modifier = moveSpeed;
+            float original_sprint_modifier = sprintModifier;
             invinibility_delay = true;
 
             // Sets new variables of powerup
-            moveSpeed = move_speed;
+            sprintModifier = sprint_modifier;
+
+            // Plays ParticleSystem
+            invinciblity.Play();
 
             // Starts powerup timer
             StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
+        }
+
+        // Enemy Freeze
+        if(powerup_type == powerup_types.EnemyFreeze)
+        {
+            otherplayers = FindObjectsOfType<PlayerInput>();
+
+            notaffectedfreeze = true;
+            float original_speed_modifier = sprintModifier;
+
+            for(int i = 0; i < otherplayers.Length; i++)
+            {
+                if(!notaffectedfreeze)
+                {
+                    otherplayers[i].sprintModifier = sprint_modifier;
+                }
+            }
+            StartCoroutine(Freeze_Delay(powerup_time, original_speed_modifier));
         }
 
         // Nuke (Just for goofs)
         if (powerup_type == powerup_types.Nuke)
         {
             // Setting old variables to be reverted back to
-            float original_sprint_modifier = moveSpeed;
+            float original_sprint_modifier = sprintModifier;
             live_delay = true;
 
             // Sets new variables of powerup
-            moveSpeed = move_speed;
+            sprintModifier = sprint_modifier;
 
             // Starts powerup timer
             StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
@@ -393,10 +425,25 @@ public class PlayerInput : MonoBehaviour {
     }
 
     // Timer for the powerups
-    IEnumerator Powerup_Timer(float timer, float original_move_speed)
+    IEnumerator Powerup_Timer(float timer, float original_sprint_modifier)
     {
         yield return new WaitForSeconds(timer);
-        moveSpeed = original_move_speed;
+        // Plays ParticleSystem
+        invinciblity.Stop();
+        SpeedBoost.Stop();
+        sprintModifier = original_sprint_modifier;
         invinibility_delay = false;
+    }
+
+    IEnumerator Freeze_Delay(float timer, float original_sprint_modifier)
+    {
+        yield return new WaitForSeconds(timer);
+        notaffectedfreeze = false;
+
+        for (int i = 0; i < otherplayers.Length; i++)
+        {
+            otherplayers[i].sprintModifier = original_sprint_modifier;
+            otherplayers[i].notaffectedfreeze = false;
+        }
     }
 }
