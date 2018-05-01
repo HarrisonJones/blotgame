@@ -194,18 +194,34 @@ public class PlayerInput : MonoBehaviour {
 
 				// We handle death by measuring our colour against the colour of the floor we're standing on
 				// Theoretically, you could also use a grey tolerance of ~0.3f if you wanted to use a mostly black map
-				if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance) && pixelColor != currentColor && !live_delay && !invinibility_delay) {
+				if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance) && !live_delay && !invinibility_delay)
+                {
+                    float min_red_range = currentColor.r - 0.002f;
+                    float max_red_range = currentColor.r + 0.002f;
 
-                    // determines whether to kill or reduce a life based on whether lives are active
-                    if (arelives)
+                    if (pixelColor.r < min_red_range && pixelColor.r > max_red_range)
                     {
-                        Live_Loss(pixelColor);
+                        Debug.Log("Diff " + "Min: " + min_red_range + " Max: " + max_red_range);
                     }
                     else
                     {
-                        Die();
+                        Debug.Log("Same: " + "Ori: " + currentColor.r + " Min: " + min_red_range + " Max: " + max_red_range);
                     }
+
+                    //// determines whether to kill or reduce a life based on whether lives are active
+                    //if (arelives)
+                    //{
+                    //    Live_Loss(pixelColor);
+                    //}
+                    //else
+                    //{
+                    //    Die();
+                    //}
                 }
+                //else if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance))
+                //{
+                //    Debug.Log("Yeeted to: " + pixelColor.ToString() + "and my colour is: " + currentColor.ToString());
+                //}
 			}
 		}
 
