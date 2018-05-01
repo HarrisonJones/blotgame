@@ -30,10 +30,6 @@ public class PlayerInput : MonoBehaviour {
     public ParticleSystem invinciblity;
     public ParticleSystem SpeedBoost;
 
-    [Header("Powerup related variables")]
-    public PlayerInput[] otherplayers;
-    public bool notaffectedfreeze;
-
     [Header("Things here originally")]
 	
     public float moveSpeed;
@@ -391,24 +387,6 @@ public class PlayerInput : MonoBehaviour {
             StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
         }
 
-        // Enemy Freeze
-        if(powerup_type == powerup_types.EnemyFreeze)
-        {
-            otherplayers = FindObjectsOfType<PlayerInput>();
-
-            notaffectedfreeze = true;
-            float original_speed_modifier = sprintModifier;
-
-            for(int i = 0; i < otherplayers.Length; i++)
-            {
-                if(!notaffectedfreeze)
-                {
-                    otherplayers[i].sprintModifier = sprint_modifier;
-                }
-            }
-            StartCoroutine(Freeze_Delay(powerup_time, original_speed_modifier));
-        }
-
         // Nuke (Just for goofs)
         if (powerup_type == powerup_types.Nuke)
         {
@@ -433,17 +411,5 @@ public class PlayerInput : MonoBehaviour {
         SpeedBoost.Stop();
         sprintModifier = original_sprint_modifier;
         invinibility_delay = false;
-    }
-
-    IEnumerator Freeze_Delay(float timer, float original_sprint_modifier)
-    {
-        yield return new WaitForSeconds(timer);
-        notaffectedfreeze = false;
-
-        for (int i = 0; i < otherplayers.Length; i++)
-        {
-            otherplayers[i].sprintModifier = original_sprint_modifier;
-            otherplayers[i].notaffectedfreeze = false;
-        }
     }
 }
