@@ -53,12 +53,17 @@ public class PlayerInput : MonoBehaviour {
 
 	public class CharacterActions : PlayerActionSet
 	{
-		public PlayerAction Left;
+        public PlayerAction AButton;
+        public PlayerAction BButton;
+        public PlayerAction Left;
 		public PlayerAction Right;
+
 
 		public CharacterActions()
 		{
-			Left = CreatePlayerAction("Move Left");
+            AButton = CreatePlayerAction("A Button");
+            BButton = CreatePlayerAction("B Button");
+            Left = CreatePlayerAction("Move Left");
 			Right = CreatePlayerAction("Move Right");
 		}
 	}
