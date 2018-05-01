@@ -195,7 +195,9 @@ public class PlayerInput : MonoBehaviour {
 				// We handle death by measuring our colour against the colour of the floor we're standing on
 				// Theoretically, you could also use a grey tolerance of ~0.3f if you wanted to use a mostly black map
 				if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance) && pixelColor != currentColor && !live_delay && !invinibility_delay) {
-
+	
+				Debug.Log (pixelColor + "=" + currentColor);
+				
                     // determines whether to kill or reduce a life based on whether lives are active
                     if (arelives)
                     {
