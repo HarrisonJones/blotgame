@@ -150,8 +150,6 @@ public class Overlord_Controller : MonoBehaviour
 
     void SetPlayerText(int playerIndex, int[] switchTheseOn)
     {
-        Debug.Log("Player Index: " + playerIndex);
-
         Transform target = background.GetChild(playerIndex);
 
         for (int i = 0; i < target.childCount; ++i)

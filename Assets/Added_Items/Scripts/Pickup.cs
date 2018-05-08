@@ -56,29 +56,14 @@ public class Pickup : MonoBehaviour
         Debug.Log("Triggered");
         if(col.transform.gameObject.tag == "Player")
         {
-            if(powerup_type == powerup_types.ExtraLife)
+            GameObject player = col.transform.gameObject;
+            PlayerInput player_script = player.GetComponent<PlayerInput>();
+            if(!player_script.occupied)
             {
-                GameObject player = col.transform.gameObject;
-                PlayerInput player_script = player.GetComponent<PlayerInput>();
-                if(player_script.arelives && player_script.lives <= 2)
-                {
-                    player_script.PowerUp(powerup_type, powerup_active_time, Sprint_Modifier);
-                    spawn_point.Powerup_Taken();
-                    Destroy(gameObject);
-                }
-            }
-            //else if(powerup_type == powerup_types.AreaWipe)
-            //{
-            //    Instantiate(arena, og_arena.transform.position, og_arena.transform.rotation);
-            //    Destroy(og_arena);
-            //    Destroy(gameObject);
-            //}
-            else
-            {
-                GameObject player = col.transform.gameObject;
-                PlayerInput player_script = player.GetComponent<PlayerInput>();
-                player_script.PowerUp(powerup_type, powerup_active_time, Sprint_Modifier);
-                spawn_point.Powerup_Taken();
+                player_script.occupied = true;
+                player_script.pt = powerup_type;
+                player_script.timer = powerup_active_time;
+                player_script.powerup_icon.sprite = gameObject.GetComponentInChildren<SpriteRenderer>().sprite;
                 Destroy(gameObject);
             }
         }

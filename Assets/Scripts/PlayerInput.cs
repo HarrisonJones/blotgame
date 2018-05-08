@@ -15,20 +15,18 @@ public class PlayerInput : MonoBehaviour {
 
     [Header("Things I have added")]
 
-    [Header("Is the live system active")]
-    public bool arelives;
-
-    [Header("Player Lives")]
-    public int lives = 3;
-
-    [Header("Live Sprites")]
-    public GameObject[] live_sprites;
-    public bool live_delay = false;
-    private bool invinibility_delay = false;
-
     [Header("Particle Systems")]
     public ParticleSystem invinciblity;
     public ParticleSystem SpeedBoost;
+
+    //Powerups
+    public powerup_types pt;
+    public bool occupied;
+    public float timer;
+    public SpriteRenderer powerup_icon;
+
+    // invinciblity
+    private bool invinibility_delay = false;
 
     [Header("Things here originally")]
 	
@@ -124,11 +122,12 @@ public class PlayerInput : MonoBehaviour {
 			bounds.AddComponent<PlayerBounds>().Awake();
 		}
 
+        // Movement
 		if (allowMovement)
 		{
 			if (useAcceleration)
 			{
-				if (characterActions.Left.IsPressed && characterActions.Right.IsPressed)
+				if (characterActions.AButton.IsPressed)
 					sprintModifier = Mathf.Min((sprintModifier + 0.0175f) * speedRate, 1);
 
 				else
@@ -153,6 +152,18 @@ public class PlayerInput : MonoBehaviour {
 			{
 				transform.Rotate(new Vector3(0, turnSpeed * Time.deltaTime, 0));
 			}
+
+            // Powerup Use
+            if (characterActions.BButton.IsPressed)
+            {
+                if(occupied)
+                {
+                    if (pt == powerup_types.Invincible)
+                    {
+                        Invincible();
+                    }
+                }
+            }
 
 			// This dictates the width of our character's line to the shader
 			// It's important to know your last position as well as your current position so you can fill in the gaps between
@@ -199,50 +210,12 @@ public class PlayerInput : MonoBehaviour {
 
 				// We handle death by measuring our colour against the colour of the floor we're standing on
 				// Theoretically, you could also use a grey tolerance of ~0.3f if you wanted to use a mostly black map
-				if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance) && pixelColor != currentColor && !live_delay && !invinibility_delay) {
-	
-				Debug.Log (pixelColor + "=" + currentColor);
-				
-                    // determines whether to kill or reduce a life based on whether lives are active
-                    if (arelives)
-                    {
-                        Live_Loss(pixelColor);
-                    }
-                    else
-                    {
-                        Die();
-                    }
+				if ((pixelColor.r < greyTolerance || pixelColor.g < greyTolerance || pixelColor.b < greyTolerance) && pixelColor != currentColor && !invinibility_delay)
+                {
+                    Die();
                 }
 			}
 		}
-
-        // Used to display lives if they are active
-        if (arelives)
-        {
-            switch (lives)
-            {
-                case 3:
-                    live_sprites[2].SetActive(true);
-                    live_sprites[1].SetActive(false);
-                    live_sprites[0].SetActive(false);
-                    break;
-                case 2:
-                    live_sprites[2].SetActive(false);
-                    live_sprites[1].SetActive(true);
-                    live_sprites[0].SetActive(false);
-                    break;
-                case 1:
-                    live_sprites[2].SetActive(false);
-                    live_sprites[1].SetActive(false);
-                    live_sprites[0].SetActive(true);
-                    break;
-            }
-
-            if (lives <= 0)
-            {
-                Die();
-            }
-        }
     }
 
 	public void SetControls(CharacterActions characterActionsIN)
@@ -304,7 +277,7 @@ public class PlayerInput : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter(Collision collision )
+	void OnCollisionEnter(Collision collision)
 	{
 		if (collision.collider.gameObject.tag == "Player")
 		{
@@ -325,22 +298,6 @@ public class PlayerInput : MonoBehaviour {
 		}
 	}
 
-    // Function played when hit and lives are active
-    void Live_Loss(Color pixelColor)
-    {
-        Debug.Log("Live lost to: " + pixelColor.ToString() + "and my colour is: " + currentColor.ToString());
-        live_delay = true;
-        lives--;
-        StartCoroutine("Live_Delay");
-    }
-
-    // Delay after being hit causing invulnerability
-    IEnumerator Live_Delay()
-    {
-        yield return new WaitForSeconds(2.0f);
-        live_delay = false;
-    }
-
     // Function played if player is hit without lives active or if lives reach zero
     void Die()
     {
@@ -350,73 +307,25 @@ public class PlayerInput : MonoBehaviour {
         DestroyObject(gameObject);
     }
 
-    // Function called when powerup is aquired
-    public void PowerUp(powerup_types powerup_type, float powerup_time, float sprint_modifier)
+    // Incincibility Powerups
+    void Invincible ()
     {
-        Debug.Log("Powerup: " + powerup_type);
+        invinibility_delay = true;
 
-        // SpeedBoost
-        if (powerup_type == powerup_types.SpeedBoost)
-        {
-            // Setting old variables to be reverted back to
-            float original_sprint_modifier = sprintModifier;
+        // Plays ParticleSystem
+        invinciblity.Play();
 
-            // Sets new variables of powerup
-            sprintModifier = sprint_modifier;
-
-            // Plays ParticleSystem
-            SpeedBoost.Play();
-
-            // Starts powerup timer
-            StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
-        }
-
-        // Extra Life
-        if (powerup_type == powerup_types.ExtraLife)
-        {
-            lives++;
-        }
-
-        // Invincibility
-        if (powerup_type == powerup_types.Invincible)
-        {
-            // Setting old variables to be reverted back to
-            float original_sprint_modifier = sprintModifier;
-            invinibility_delay = true;
-
-            // Sets new variables of powerup
-            sprintModifier = sprint_modifier;
-
-            // Plays ParticleSystem
-            invinciblity.Play();
-
-            // Starts powerup timer
-            StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
-        }
-
-        // Nuke (Just for goofs)
-        if (powerup_type == powerup_types.Nuke)
-        {
-            // Setting old variables to be reverted back to
-            float original_sprint_modifier = sprintModifier;
-            live_delay = true;
-
-            // Sets new variables of powerup
-            sprintModifier = sprint_modifier;
-
-            // Starts powerup timer
-            StartCoroutine(Powerup_Timer(powerup_time, original_sprint_modifier));
-        }
+        StartCoroutine(Invincibility_Timer(timer));
     }
 
-    // Timer for the powerups
-    IEnumerator Powerup_Timer(float timer, float original_sprint_modifier)
+    IEnumerator Invincibility_Timer(float timer)
     {
         yield return new WaitForSeconds(timer);
-        // Plays ParticleSystem
+        // Stops ParticleSystem
         invinciblity.Stop();
-        SpeedBoost.Stop();
-        sprintModifier = original_sprint_modifier;
+
+        occupied = false;
+        powerup_icon.sprite = null;
         invinibility_delay = false;
     }
 }
