@@ -15,15 +15,19 @@ public class PlayerInput : MonoBehaviour {
 
     [Header("Things I have added")]
 
-    [Header("Particle Systems")]
-    public ParticleSystem invinciblity;
-    public ParticleSystem SpeedBoost;
-
-    //Powerups
+    [Header("Powerup Basics")]
     public powerup_types pt;
     public bool occupied;
     public float timer;
     public SpriteRenderer powerup_icon;
+
+    [Header("Powerup Particle Systems")]
+    public ParticleSystem invinciblity_particle;
+    public ParticleSystem speedboost_particle;
+
+    [Header("Powerup Audio")]
+    public AudioClip invincibility_audio;
+    public AudioClip speedboost_audio;
 
     // invinciblity
     private bool invinibility_delay = false;
@@ -127,7 +131,7 @@ public class PlayerInput : MonoBehaviour {
 		{
 			if (useAcceleration)
 			{
-				if (characterActions.AButton.IsPressed)
+				if (characterActions.AButton.IsPressed || characterActions.Left.IsPressed && characterActions.Right.IsPressed)
 					sprintModifier = Mathf.Min((sprintModifier + 0.0175f) * speedRate, 1);
 
 				else
@@ -313,7 +317,8 @@ public class PlayerInput : MonoBehaviour {
         invinibility_delay = true;
 
         // Plays ParticleSystem
-        invinciblity.Play();
+        invinciblity_particle.Play();
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(invincibility_audio);
 
         StartCoroutine(Invincibility_Timer(timer));
     }
@@ -322,7 +327,7 @@ public class PlayerInput : MonoBehaviour {
     {
         yield return new WaitForSeconds(timer);
         // Stops ParticleSystem
-        invinciblity.Stop();
+        invinciblity_particle.Stop();
 
         occupied = false;
         powerup_icon.sprite = null;

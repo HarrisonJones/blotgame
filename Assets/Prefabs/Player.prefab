@@ -4009,12 +4009,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   freezeOn: 0
-  invinciblity: {fileID: 198429482828004854}
-  SpeedBoost: {fileID: 198755422784577928}
   pt: 0
   occupied: 0
   timer: 0
   powerup_icon: {fileID: 212885648132391326}
+  invinciblity_particle: {fileID: 198429482828004854}
+  speedboost_particle: {fileID: 198755422784577928}
+  invincibility_audio: {fileID: 8300000, guid: 38912a430227963448fa3add8d5d47dd, type: 3}
+  speedboost_audio: {fileID: 8300000, guid: fbe1cb18bbe83df48b78df35348b2b93, type: 3}
   moveSpeed: 6
   minSpeed: 2
   turnSpeed: 280
