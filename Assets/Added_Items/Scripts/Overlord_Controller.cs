@@ -12,7 +12,7 @@ public class Overlord_Controller : MonoBehaviour
     public Transform[] spawnPositions;
 
     public Transform background;
-    int numberOfPlayers = 0;
+    public int numberOfPlayers = 0;
     List<PlayerInput> playerList;
 
     Bounds goBounds;
@@ -59,7 +59,7 @@ public class Overlord_Controller : MonoBehaviour
         playerList.Add(newPlayer.GetComponent<PlayerInput>());
         newPlayer.GetComponent<PlayerInput>().SetControls(newcharacterActions);
 
-        SetPlayerText(numberOfPlayers, new int[] { 1, 4, 7, 10 });
+        SetPlayerText(numberOfPlayers, new int[] { 1, 4, 7, 11 });
 
         ++numberOfPlayers;
     }
@@ -92,7 +92,7 @@ public class Overlord_Controller : MonoBehaviour
             newCharacterActions.AButton.ListenForBinding();
             displayText = "Player " + (i + 1).ToString() + " press A Button";
             print(displayText);
-            SetPlayerText(i, new int[] { 3, 5, 8, 11 });
+            SetPlayerText(i, new int[] { 3, 5, 8, 12 });
 
             while (newCharacterActions.AButton.Bindings.Count <= 0)
             {
@@ -107,7 +107,7 @@ public class Overlord_Controller : MonoBehaviour
             displayText = "Player " + (i + 1).ToString() + " press B Button";
             print(displayText);
 
-            SetPlayerText(i, new int[] { 4, 6, 8, 12 });
+            SetPlayerText(i, new int[] { 4, 6, 8, 13 });
             while (newCharacterActions.BButton.Bindings.Count <= 0)
             {
 
@@ -121,7 +121,7 @@ public class Overlord_Controller : MonoBehaviour
             displayText = "Player " + (i + 1).ToString() + " press Left";
             print(displayText);
 
-            SetPlayerText(i, new int[] { 4, 7, 9, 13 });
+            SetPlayerText(i, new int[] { 4, 7, 8, 9, 14 });
             while (newCharacterActions.Left.Bindings.Count <= 0)
             {
 
@@ -135,7 +135,7 @@ public class Overlord_Controller : MonoBehaviour
             displayText = "Player " + (i + 1).ToString() + " press Right";
             print(displayText);
 
-            SetPlayerText(i, new int[] { 4, 7, 9, 13 });
+            SetPlayerText(i, new int[] { 4, 7, 8, 10, 14 });
             while (newCharacterActions.Right.Bindings.Count <= 0)
             {
 
@@ -150,6 +150,8 @@ public class Overlord_Controller : MonoBehaviour
 
     void SetPlayerText(int playerIndex, int[] switchTheseOn)
     {
+        Debug.Log("Player Index: " + playerIndex);
+
         Transform target = background.GetChild(playerIndex);
 
         for (int i = 0; i < target.childCount; ++i)
