@@ -763,15 +763,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
-    - target: {fileID: 4871063464049682, guid: 296f603e9e2e1cd41b6aa9b4ed21bbdb, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 114780230901243916, guid: 296f603e9e2e1cd41b6aa9b4ed21bbdb,
-        type: 2}
-      propertyPath: spawn_time
-      value: 20
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 296f603e9e2e1cd41b6aa9b4ed21bbdb, type: 2}
   m_IsPrefabParent: 0

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using InControl;
 
 public class PlayerInput : MonoBehaviour
@@ -12,7 +13,7 @@ public class PlayerInput : MonoBehaviour
     private FreezeManagement freezer_script;
 
 	public bool freezeOn;
-    public float speedRate;
+    public float speedRate = 1.0f;
     private bool speedShoes;
     private float speedShoesMax = 600;
 
@@ -102,29 +103,24 @@ public class PlayerInput : MonoBehaviour
 	//Time based powerups are reduced per frame rather than through deltaTime.
 	void FixedUpdate ()
 	{
-        if(freezer == null)
-        {
-            freezer = GameObject.Find("FreezeManagement");
-            freezer_script = freezer.GetComponent<FreezeManagement>();
-            freezer_script.players.Add(this);
-        }
-
         if (freezeOn)
         {
             speedRate = 0;
         }
-        else
-        {
-            speedRate = 1.0f;
-        }
-
-        if (speedShoes)
+        else if (speedShoes)
         {
             speedRate = 1.5f;
         }
         else
         {
             speedRate = 1.0f;
+        }
+
+        if (freezer == null)
+        {
+            freezer = GameObject.Find("FreezeManagement");
+            freezer_script = freezer.GetComponent<FreezeManagement>();
+            freezer_script.players.Add(this);
         }
     }
 	
