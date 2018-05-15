@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/UI/Scenes/StartMenu.unity
     guid: 8571a87cb3259a945a87844ad3d09b25
   - enabled: 1
-    path: Assets/Scenes/CharacterSelect.unity
-    guid: dda9a62d52bfc1f4c9c4009aa9f05f26
+    path: Assets/Scenes/CharacterSelect_Controller_UI.unity
+    guid: 05a6348c1de63fd4e81414c046a77c33
   - enabled: 1
     path: Assets/Scenes/AdamMain.unity
     guid: e60fc14b0a9f16f4e8294ffb1951ebdc

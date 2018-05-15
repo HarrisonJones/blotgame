@@ -1395,6 +1395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ff8968d9ea77c54393537bb7af089c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelname: CharacterSelect_Controller_UI
 --- !u!114 &1532620353
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 // By Peter Liang.
 public class UIMethods : MonoBehaviour
 {
+    public string levelname;
+
 	// Closes the game application. Will not work in editor mode.
 	public void Quit()
 	{
@@ -23,6 +25,6 @@ public class UIMethods : MonoBehaviour
 	// Loads the specified scene based on scene name. Name spelling is important.
 	public void LoadScene(string sceneName)
 	{
-		SceneManager.LoadScene(sceneName);
+		SceneManager.LoadScene(levelname);
 	}
 }
