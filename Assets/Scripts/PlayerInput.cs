@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using InControl;
 
-public class PlayerInput : MonoBehaviour {
+public class PlayerInput : MonoBehaviour
+{
 	
 	[Header("PowerUps")]
 	
 	private GameObject freezer;
+    private FreezeManagement freezer_script;
+
 	public bool freezeOn;
-	private float speedRate;
-	private float speedShoes;
-	private float speedShoesMax = 600;
+    public float speedRate;
+    private bool speedShoes;
+    private float speedShoesMax = 600;
 
     [Header("Things I have added")]
 
@@ -24,10 +27,12 @@ public class PlayerInput : MonoBehaviour {
     [Header("Powerup Particle Systems")]
     public ParticleSystem invinciblity_particle;
     public ParticleSystem speedboost_particle;
+    public ParticleSystem freeze_particle;
 
     [Header("Powerup Audio")]
     public AudioClip invincibility_audio;
     public AudioClip speedboost_audio;
+    public AudioClip freeze_audio;
 
     // invinciblity
     private bool invinibility_delay = false;
@@ -79,8 +84,6 @@ public class PlayerInput : MonoBehaviour {
 			painter = GameObject.FindObjectOfType<Painter>();
 
 		ChangeColor(Color.black);
-
-		freezer = GameObject.Find("FreezeManagement");
 		
 		currentSpeed = minSpeed;
 		if (useAcceleration)
@@ -99,27 +102,34 @@ public class PlayerInput : MonoBehaviour {
 	//Time based powerups are reduced per frame rather than through deltaTime.
 	void FixedUpdate ()
 	{
-		
-		if (freezeOn)
-		{
-			speedRate = 0;		
-		}
-		else if (speedShoes > 0)
-		{
-			speedRate = 1.5f;
-			speedShoes -= Time.deltaTime;
-		}		
-		else
-		{
-				speedRate = 1f;
-				speedShoes = 0;
-		}
-	}
+        if(freezer == null)
+        {
+            freezer = GameObject.Find("FreezeManagement");
+            freezer_script = freezer.GetComponent<FreezeManagement>();
+            freezer_script.players.Add(this);
+        }
+
+        if (freezeOn)
+        {
+            speedRate = 0;
+        }
+        else
+        {
+            speedRate = 1.0f;
+        }
+
+        if (speedShoes)
+        {
+            speedRate = 1.5f;
+        }
+        else
+        {
+            speedRate = 1.0f;
+        }
+    }
 	
 	void Update ()
-	{
-		//freezeOn = freezer.gameObject.GetComponent("FreezeManagement").freeze();
-		
+	{		
 		if (PlayerBounds.S == null)
 		{
 			GameObject bounds = new GameObject("Bounds");
@@ -166,12 +176,23 @@ public class PlayerInput : MonoBehaviour {
                     {
                         Invincible();
                     }
+
+                    if (pt == powerup_types.SpeedBoost && !freezeOn)
+                    {
+                        Speedboost();
+                    }
+
+                    if (pt == powerup_types.EnemyFreeze)
+                    {
+                        Freeze();
+                    }
                 }
             }
 
 			// This dictates the width of our character's line to the shader
 			// It's important to know your last position as well as your current position so you can fill in the gaps between
-			if (painter) {
+			if (painter)
+            {
 
 				lastKnownTextureCoord = painter.Dispense (transform.position, lastKnownTextureCoord, 0.15f * moveSpeed/currentSpeed, paintingMaterial);
 				paintingMaterial.SetFloat ("OldCharacterSpeedFactor", 0.15f * moveSpeed/currentSpeed);
@@ -311,7 +332,7 @@ public class PlayerInput : MonoBehaviour {
         DestroyObject(gameObject);
     }
 
-    // Incincibility Powerups
+    // Incincibility Powerup
     void Invincible ()
     {
         invinibility_delay = true;
@@ -332,5 +353,45 @@ public class PlayerInput : MonoBehaviour {
         occupied = false;
         powerup_icon.sprite = null;
         invinibility_delay = false;
+    }
+
+    // Speedboost Powerup
+    void Speedboost ()
+    {
+        speedShoes = true;
+
+        // Plays ParticleSystem
+        speedboost_particle.Play();
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(speedboost_audio);
+
+        StartCoroutine(Speedboost_Timer(timer));
+    }
+
+    IEnumerator Speedboost_Timer (float timer)
+    {
+        yield return new WaitForSeconds(timer);
+
+        // Stops ParticleSystem
+        speedboost_particle.Stop();
+
+        occupied = false;
+        powerup_icon.sprite = null;
+        speedShoes = false;
+    }
+
+    void Freeze ()
+    {
+        freezer_script.FreezeOn(this);
+
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(freeze_audio);
+    }
+
+    IEnumerator Freeze_Timer (float timer)
+    {
+        yield return new WaitForSeconds(timer);
+
+        freezer_script.FreezeOff();
+        occupied = false;
+        powerup_icon.sprite = null;
     }
 }
